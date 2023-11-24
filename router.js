@@ -73,6 +73,6 @@ router.post(
 
 router.post('/login', Login);
 router.get('/user', authMiddleware, getUser);
-router.get('/refresh', authMiddleware, refresh);
+router.get('/refresh', refresh);
 
 module.exports = router;

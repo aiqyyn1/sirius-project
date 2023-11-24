@@ -4,13 +4,21 @@ const bcrypt = require('bcryptjs');
 const { model } = require('mongoose');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-const { secret } = require('../../config');
+const { secretAccess } = require('../../config');
+const { secretRefresh } = require('../../config');
 const generateAccessToken = (id, roles) => {
   const payload = {
     id,
     roles,
   };
-  return jwt.sign(payload, secret, { expiresIn: '7h' });
+  return jwt.sign(payload, secretAccess.secret, { expiresIn: '7h' });
+};
+const generateRefreshToken = (id, roles) => {
+  const payload = {
+    id,
+    roles,
+  };
+  return jwt.sign(payload, secretRefresh.secret, { expiresIn: '12h' });
 };
 const Registration = async (req, res) => {
   try {
@@ -58,18 +66,13 @@ const Login = async (req, res) => {
     if (!validPassword) {
       return res.status(400).json({ message: 'Password is not correct' });
     }
-    const token = generateAccessToken(user.id, user.roles);
-    res.cookie('access', token, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 7 * 60 * 60 * 1000,
+    const accessToken = generateAccessToken(user.id, user.roles);
+    const refreshToken = generateRefreshToken(user.id, user.roles);
+    return res.json({
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      id: user._id,
     });
-    res.cookie('refresh', token, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 12 * 60 * 60 * 1000,
-    });
-    return res.json({ message: 'Succesfully login' });
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: 'Login error' });
@@ -77,7 +80,7 @@ const Login = async (req, res) => {
 };
 const getUser = async (req, res) => {
   try {
-    res.send(req.user);
+    res.send(req.body);
   } catch (e) {
     console.log(e);
   }
@@ -85,17 +88,17 @@ const getUser = async (req, res) => {
 
 const refresh = (req, res) => {
   const refreshToken = req.headers.authorization.split(' ')[1];
-
+  console.log(refreshToken);
   if (!refreshToken) {
     return res.status(401).json({ message: 'No refresh token provided' });
   }
 
   try {
-    const decodedData = jwt.verify(refreshToken, secret);
+    const decodedData = jwt.verify(refreshToken, secretRefresh.secret);
 
     if (decodedData) {
       const { id, roles } = decodedData;
-      const newAccessToken = jwt.sign({ id, roles }, secret, {
+      const newAccessToken = jwt.sign({ id, roles }, secretAccess.secret, {
         expiresIn: '7h',
       });
 

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config');
+const { secretAccess } = require('../config');
+const { secretRefresh } = require('../config');
 const User = require('../model/User');
 
 module.exports = async function (req, res, next) {
@@ -10,9 +11,8 @@ module.exports = async function (req, res, next) {
       return res.status(403).json({ message: 'User is not authenticated' });
     }
 
-    const decodedData = jwt.verify(token, secret);
+    const decodedData = jwt.verify(token, secretAccess.secret);
     req.user = await User.findOne(decodedData);
-
     next();
   } catch (e) {
     console.log(e);
