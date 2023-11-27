@@ -1,7 +1,10 @@
 const secretAccess = {
-  secret: 'KEY_ACCESS',
+      secret: 'KEY_ACCESS',
 };
 const secretRefresh = {
-  secret: 'KEY_REFRESH',
+      secret: 'KEY_REFRESH',      
 };
-module.exports = {secretAccess, secretRefresh}
+const secretReset = {
+      secret: 'KEY_RESET',
+}
+module.exports = {secretAccess, secretRefresh, secretReset}
