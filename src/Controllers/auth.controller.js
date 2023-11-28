@@ -4,6 +4,10 @@ const bcrypt = require('bcryptjs');
 const { model } = require('mongoose');
 const jwt = require('jsonwebtoken');
 
+const uuid = require('uuid');
+
+
+
 const { validationResult } = require('express-validator');
 const { secretAccess } = require('../../config');
 const { secretRefresh } = require('../../config');
@@ -22,6 +26,9 @@ const generateRefreshToken = (id, roles) => {
 
 const Registration = async (req, res) => {
   try {
+
+    const { username, password, email, re_password } = req.body;
+
     const { username, password, email, re_password, description } = req.body;
     const image = req.file.path
     const candidate = await User.findOne({ username });
@@ -39,14 +46,22 @@ const Registration = async (req, res) => {
     if (password !== re_password) {
       return res.status(400).json({ message: 'Passwordos does not match' });
     }
+
+    const hashPassword = bcrypt.hash(password, 7);
+
     const hashPassword = await bcrypt.hash(password, 7);
+
     const userRole = await Role.findOne({ value: 'USER' });
     const user = new User({
       username,
       email,
+
+      password: hashPassword,
+
       password:hashPassword,
       image,
       description,
+
       roles: [userRole.value],
     });
     await user.save();
@@ -60,7 +75,11 @@ const Login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
+
+    console.log(user);
+
     console.log(username);
+
     if (!user) {
       return res
         .status(400)
