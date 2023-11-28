@@ -7,9 +7,11 @@ const {
   logout,
   resetSend,
   resetChange,
-} = require('./src/Controllers/auth.controller');
+} = require('../src/Controllers/auth.controller');
 const { check } = require('express-validator');
-const authMiddleware = require('./middleware/auth.middleware');
+const authMiddleware = require('../middleware/auth.middleware');
+const upload = require('../middleware/imageUpload.middleware');
+
 const router = Router();
 
 /**
@@ -66,22 +68,34 @@ const router = Router();
 
 router.post(
   '/register',
+  upload.single('image'),
   [
     check('username', 'Username must not be empty').notEmpty(),
     check('email', 'Email is not correct').isEmail(),
+    check('email', 'Email must not be empty').notEmpty(),
+    check('image').custom((value, { req }) => {
+      if (!req.file) {
+        throw new Error('Image must not be empty');
+      }
+      return true;
+    }),
+    check('description', 'Description must not be empty').notEmpty(),
     check('re_password', 'Confirmation password must not be empty').notEmpty(),
   ],
-  Registration);
+
+  Registration
+);
 
 router.post('/login', Login);
-router.post('/logout',logout);
+router.post('/logout', logout);
 router.get('/user', authMiddleware, getUser);
 router.get('/refresh', refresh);
-router.post('/reset', 
-      [
-            check('email').isEmail()
-      ],
-      resetSend);
+router.post(
+  '/reset',
+  [check('email').isEmail()],
+
+  resetSend
+);
 router.post('/reset/:link', resetChange);
 
 module.exports = router;
