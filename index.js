@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const router = require('./routes/router');
 const swaggerjsdoc = require('swagger-jsdoc');
 const swagger = require('swagger-ui-express');
+const path = require('path')
 require('dotenv').config();
 const app = express();
 const port = 8080;
@@ -36,7 +37,7 @@ app.use(
 );
 const uri =
   'mongodb+srv://aiqyyn1:aikyn777@cluster0.j3wfjzi.mongodb.net/?retryWrites=true&w=majority';
-
+  app.use('/Images', express.static(path.join(__dirname, 'Images')));
 const start = async () => {
   try {
     await mongoose.connect(uri);

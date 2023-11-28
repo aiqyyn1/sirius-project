@@ -18,7 +18,8 @@ module.exports = async function (req, res, next) {
             }
 
             const decodedData = jwt.verify(token, secretAccess.secret);
-            req.user = await User.findOne(decodedData);
+            const {id} = decodedData
+            req.user = await User.findOne({_id:id});
             next();
       } catch (e) {
             console.log(e);
