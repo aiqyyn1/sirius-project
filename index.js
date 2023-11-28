@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const router = require('./router');
+const router = require('./routes/router');
 const swaggerjsdoc = require('swagger-jsdoc');
 const swagger = require('swagger-ui-express');
-require('dotenv').config()
+require('dotenv').config();
 const app = express();
 const port = 8080;
 const options = {
@@ -51,4 +51,4 @@ const start = async () => {
 };
 
 start();
-module.exports = app
+module.exports = app;
