@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { secretAccess } = require('../config');
+
+const { secretAccess } = require('../config')
 const { secretRefresh } = require('../config');
 const User = require('../model/User');
 

@@ -1,31 +1,12 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const router = require('./routes/router');
-const swaggerjsdoc = require('swagger-jsdoc');
-const swagger = require('swagger-ui-express');
+const router = require('./src/routes/router');
 const path = require('path')
-require('dotenv').config();
 const app = express();
 const port = 8080;
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Sirius api doc',
-      version: '0.1',
-    },
-    servers: [
-      {
-        url: 'http://localhost:8080/',
-      },
-    ],
-  },
-  apis: ['./router.js'],
-};
-const spacs = swaggerjsdoc(options);
-app.use('/api-docs', swagger.serve, swagger.setup(spacs));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/auth', router);

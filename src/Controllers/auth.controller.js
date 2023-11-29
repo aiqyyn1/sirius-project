@@ -1,16 +1,12 @@
-const User = require('../../model/User');
-const Role = require('../../model/Role');
+const User = require('../model/User');
+const Role = require('../model/Role');
 const bcrypt = require('bcryptjs');
-const { model } = require('mongoose');
 const jwt = require('jsonwebtoken');
-
-const uuid = require('uuid');
-
 const { validationResult } = require('express-validator');
-const { secretAccess } = require('../../config');
-const { secretRefresh } = require('../../config');
-const { secretReset } = require('../../config');
-const mailService = require('../../mail-service');
+const { secretAccess } = require('../config');
+const { secretRefresh } = require('../config');
+const { secretReset } = require('../config');
+const mailService = require('../mail-service');
 
 const generateAccessToken = (id, roles) => {
   const payload = { id, roles };
@@ -68,7 +64,6 @@ const Login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
-
 
     if (!user) {
       return res
@@ -168,7 +163,16 @@ const UpdateUser = async (req, res) => {
     return res.status(500).send({ message: e.message });
   }
 };
+const deleteUser = async (req, res) => {
+  try {
+    const id = req.params.id;
 
+    const user = await User.findByIdAndDelete({ _id: id });
+    res.send({ message: 'Succesfully deleted' });
+  } catch (e) {
+    res.send({ message: e.message });
+  }
+};
 const resetSend = async (req, res) => {
   try {
     const { email } = req.body;
@@ -251,4 +255,5 @@ module.exports = {
   resetSend,
   resetChange,
   UpdateUser,
+  deleteUser
 };
