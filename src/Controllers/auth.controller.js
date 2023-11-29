@@ -69,9 +69,6 @@ const Login = async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
 
-    console.log(user);
-
-    console.log(username);
 
     if (!user) {
       return res
@@ -110,7 +107,6 @@ const getUser = async (req, res) => {
 
 const refresh = async (req, res) => {
   const refreshToken = req.headers.authorization.split(' ')[1];
-  console.log(refreshToken);
   if (!refreshToken) {
     return res.status(401).json({ message: 'No refresh token provided' });
   }
@@ -120,9 +116,7 @@ const refresh = async (req, res) => {
 
     if (decodedData) {
       const { id, roles } = decodedData;
-      const newAccessToken = jwt.sign({ id, roles }, secretAccess.secret, {
-        expiresIn: '7h',
-      });
+      const newAccessToken = generateAccessToken(id, roles);
 
       return res.json({ accessToken: newAccessToken });
     } else {
@@ -142,6 +136,36 @@ const logout = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(400).json({ message: 'Invalid ' });
+  }
+};
+const UpdateUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findOne({ _id: id });
+    if (req.body.username) {
+      user.username = req.body.username;
+    }
+
+    if (req.body.email) {
+      user.email = req.body.email;
+    }
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    if (req.body.description) {
+      user.description = req.body.description;
+    }
+
+    if (req.file) {
+      user.image = req.file.path;
+    }
+
+    await user.save();
+    return res.status(200).send(user);
+  } catch (e) {
+    return res.status(500).send({ message: e.message });
   }
 };
 
@@ -226,4 +250,5 @@ module.exports = {
   logout,
   resetSend,
   resetChange,
+  UpdateUser,
 };

@@ -7,10 +7,13 @@ const {
   logout,
   resetSend,
   resetChange,
+  UpdateUser,
 } = require('../src/Controllers/auth.controller');
 const { check } = require('express-validator');
-const authMiddleware = require('../middleware/auth.middleware');
+const authMiddleware = require('../middleware/getUser.middleware');
+const getRefreshToken = require('../middleware/getRefreshToken.middleware');
 const upload = require('../middleware/imageUpload.middleware');
+const authCheckMiddleware = require('../middleware/authCheck.middleware');
 
 const router = Router();
 
@@ -87,11 +90,13 @@ router.post(
 );
 
 router.post('/login', Login);
-router.post('/logout', logout);
-router.get('/user', authMiddleware, getUser);
-router.get('/refresh', refresh);
+router.put('/updateUser/:id',authCheckMiddleware, upload.single("image") , UpdateUser)
+router.post('/logout', authCheckMiddleware, logout);
+router.get('/user', authMiddleware , getUser);
+router.get('/refresh', getRefreshToken, refresh);
 router.post(
   '/reset',
+
   [check('email').isEmail()],
 
   resetSend
