@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-const { secretAccess } = require('../config')
-const { secretRefresh } = require('../config');
-const User = require('../model/User');
+const { secretAccess } = require('../../config')
+const { secretRefresh } = require('../../config');
+const User = require('../../model/User');
 
 module.exports = async function (req, res, next) {
   try {
