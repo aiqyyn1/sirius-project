@@ -20,7 +20,7 @@ const generateRefreshToken = (id, roles) => {
 
 const Registration = async (req, res) => {
   try {
-    const { username, password, email, re_password } = req.body;
+    const { username, password, email, re_password, description } = req.body;
     const image = req.file.path;
     const candidate = await User.findOne({ username });
     const errors = validationResult(req);
@@ -35,7 +35,7 @@ const Registration = async (req, res) => {
       return res.status(400).json({ message: 'User is already exists' });
     }
     if (password !== re_password) {
-      return res.status(400).json({ message: 'Passwordos does not match' });
+      return res.status(400).json({ message: 'Passwords does not match' });
     }
 
     const hashPassword = await bcrypt.hash(password, 7);
@@ -91,14 +91,14 @@ const Login = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
-  try {
-    const { __v, roles, ...user } = req.user._doc;
-    res.send(user);
-  } catch (e) {
-    console.log(e);
-  }
-};
+// const getUser = async (req, res) => {
+//   try {
+//     const { __v, roles, ...user } = req.user._doc;
+//     res.send(user);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
 
 const refresh = async (req, res) => {
   const refreshToken = req.headers.authorization.split(' ')[1];
@@ -167,7 +167,7 @@ const deleteUser = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const user = await User.findByIdAndDelete({ _id: id });
+    await User.findByIdAndDelete({ _id: id });
     res.send({ message: 'Succesfully deleted' });
   } catch (e) {
     res.send({ message: e.message });
@@ -249,11 +249,10 @@ const setCookie = (res, name, token, time) => {
 module.exports = {
   Registration,
   Login,
-  getUser,
   refresh,
   logout,
   resetSend,
   resetChange,
   UpdateUser,
-  deleteUser
+  deleteUser,
 };
