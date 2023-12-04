@@ -1,20 +1,25 @@
 const Router = require('express');
 const {
   Registration,
-  getUser,
   Login,
   refresh,
   logout,
   resetSend,
   resetChange,
   UpdateUser,
-  deleteUser
+  deleteUser,
 } = require('../Controllers/auth.controller');
 const { check } = require('express-validator');
 const authMiddleware = require('../middleware/user/getUser.middleware');
 const getRefreshToken = require('../middleware/user/getRefreshToken.middleware');
 const upload = require('../middleware/user/imageUpload.middleware');
 const authCheckMiddleware = require('../middleware/user/authCheck.middleware');
+const {
+  getUsers,
+  getUser,
+  updateUser,
+  createUser,
+} = require('../Controllers/user.controller');
 const router = Router();
 router.post(
   '/register',
@@ -37,13 +42,13 @@ router.post(
 );
 
 router.post('/login', Login);
-router.put(
-  '/updateUser/:id',
-  authCheckMiddleware,
-  upload.single('image'),
-  UpdateUser
-);
-router.delete('/delete/:id', authCheckMiddleware, deleteUser)
+// router.put(
+//   '/updateUser/:id',
+//   authCheckMiddleware,
+//   upload.single('image'),
+//   UpdateUser
+// );
+router.delete('/delete/:id', authCheckMiddleware, deleteUser);
 router.post('/logout', authCheckMiddleware, logout);
 router.get('/user', authMiddleware, getUser);
 router.get('/refresh', getRefreshToken, refresh);
@@ -56,4 +61,9 @@ router.post(
 );
 router.post('/reset/:link', resetChange);
 
+router.get('/users', authCheckMiddleware, getUsers);
+router.get('/users/:id', authCheckMiddleware, getUser);
+router.put('/users/:id', authCheckMiddleware, updateUser);
+router.delete('/users/:id', authCheckMiddleware, deleteUser);
+router.post('/users/:id',  authCheckMiddleware, createUser)
 module.exports = router;
