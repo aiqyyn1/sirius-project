@@ -11,10 +11,10 @@ const {
   deleteUser
 } = require('../Controllers/auth.controller');
 const { check } = require('express-validator');
-const authMiddleware = require('../middleware/getUser.middleware');
-const getRefreshToken = require('../middleware/getRefreshToken.middleware');
-const upload = require('../middleware/imageUpload.middleware');
-const authCheckMiddleware = require('../middleware/authCheck.middleware');
+const authMiddleware = require('../middleware/user/getUser.middleware');
+const getRefreshToken = require('../middleware/user/getRefreshToken.middleware');
+const upload = require('../middleware/user/imageUpload.middleware');
+const authCheckMiddleware = require('../middleware/user/authCheck.middleware');
 const router = Router();
 router.post(
   '/register',
