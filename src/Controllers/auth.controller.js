@@ -21,7 +21,7 @@ const generateRefreshToken = (id, roles) => {
 const Registration = async (req, res) => {
   try {
     const { username, password, email, re_password } = req.body;
-    const image = req.file.path;
+    // const image = req.file.path;
     const candidate = await User.findOne({ username });
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -44,13 +44,9 @@ const Registration = async (req, res) => {
     const user = new User({
       username,
       email,
-
       password: hashPassword,
-
-      password: hashPassword,
-      image,
-      description,
-
+      // image,
+      // description,
       roles: [userRole.value],
     });
     await user.save();
