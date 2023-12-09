@@ -4,12 +4,16 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const router = require('./src/routes/router');
+const articleRouter = require('./src/routes/articleRouter')
+const swaggerjsdoc = require('swagger-jsdoc');
+const swagger = require('swagger-ui-express');
 const path = require('path')
 const app = express();
 const port = 8080;
 app.use(express.json());
 app.use(cookieParser());
 app.use('/auth', router);
+app.use('/articles', articleRouter)
 app.use(
   cors({
     credentials: true,
@@ -18,7 +22,7 @@ app.use(
 );
 const uri =
   'mongodb+srv://aiqyyn1:aikyn777@cluster0.j3wfjzi.mongodb.net/?retryWrites=true&w=majority';
-  app.use('/Images', express.static(path.join(__dirname, 'Images')));
+//   app.use('/Images', express.static(path.join(__dirname, 'Images')));
 const start = async () => {
   try {
     await mongoose.connect(uri);
